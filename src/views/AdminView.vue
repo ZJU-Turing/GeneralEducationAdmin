@@ -3,6 +3,9 @@ import LoginComp from "@/components/LoginComp.vue";
 import TableComp from "@/components/TableComp.vue";
 import { ref } from "vue";
 
+import util from "@/assets/js/util";
+import lc from "@/assets/js/leancloud";
+
 const courseConfig = {
     columns: [
         { value: "name", type: String },
@@ -27,16 +30,31 @@ const remarkConfig = {
 
 const tbHeight = ref("calc(100vh - 2 * 1.5rem - 39px - 2 * 15px - 2 * 32px - 1.5rem)");
 const activePanel = ref("remark");
+const loading = ref(false);
+
+const downloadCSV = async () => {
+    loading.value = true;
+    try {
+        let courses = await lc.getAllCourses();
+        let remarks = await lc.getAllRemarks();
+        let dl = util.generateNestedData(courses, remarks);
+        util.download(dl, "data.csv");
+        ElMessage.success("导出成功");
+    } catch (e) {
+        ElMessage.error("导出失败 " + e);
+    }
+    loading.value = false;
+};
 </script>
 
 <template>
     <LoginComp>
-        <el-tabs v-model="activePanel" class="panel" type="border-card">
+        <el-tabs v-loading.fullscreen.lock="loading" v-model="activePanel" class="panel" type="border-card">
             <el-tab-pane label="评价" name="remark">
-                <TableComp :config="remarkConfig" :height="tbHeight" />
+                <TableComp @down="downloadCSV" :config="remarkConfig" :height="tbHeight" />
             </el-tab-pane>
             <el-tab-pane label="课程" name="course">
-                <TableComp :config="courseConfig" :height="tbHeight" />
+                <TableComp @down="downloadCSV" :config="courseConfig" :height="tbHeight" />
             </el-tab-pane>
         </el-tabs>
     </LoginComp>

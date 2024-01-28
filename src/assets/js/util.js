@@ -49,19 +49,6 @@ function parseCourses(cs) {
     return ret;
 }
 
-function timeString() {
-    let now = new Date();
-
-    let Y = now.getFullYear();
-    let M = ("0" + (now.getMonth() + 1)).slice(-2);
-    let D = ("0" + now.getDate()).slice(-2);
-    let h = ("0" + now.getHours()).slice(-2);
-    let m = ("0" + now.getMinutes()).slice(-2);
-    let s = ("0" + now.getSeconds()).slice(-2);
-
-    return `${Y}${M}${D}_${h}${m}${s}`;
-}
-
 function download(data, fileName) {
     let csv = Papa.unparse(data);
     let blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
@@ -73,14 +60,54 @@ function download(data, fileName) {
     URL.revokeObjectURL(url);
 }
 
+function purify(v, config) {
+    let ret = {};
+    for (let i = 0; i < config.length; i++) {
+        let col = config[i];
+        switch (col.type) {
+            case Number:
+                ret[col.value] = +v[col.value];
+                break;
+            case Boolean:
+                ret[col.value] = v[col.value] == "true";
+                break;
+            default:
+                ret[col.value] = v[col.value];
+                break;
+        }
+    }
+    return ret;
+}
+
+function generateNestedData(courses, remarks) {
+    let ret = [];
+    for (let i = 0; i < remarks.length; i++) {
+        let remark = remarks[i];
+        let course = courses.find((c) => c.name == remark.course);
+        ret.push({
+            年级: remark.grade,
+            课程大类: course.type,
+            具体分类: course.category,
+            课程名称: course.name,
+            劳育认定: course.isLabor ? "True" : "False",
+            美育认定: course.isArt ? "True" : "False",
+            姓名: remark.name,
+            评分: remark.score,
+            评价: remark.comment,
+        });
+    }
+    return ret;
+}
+
 const util = {
     getTypes,
     getCategories,
     getCourses,
     filter,
     parseCourses,
-    timeString,
     download,
+    purify,
+    generateNestedData,
 };
 
 export default util;

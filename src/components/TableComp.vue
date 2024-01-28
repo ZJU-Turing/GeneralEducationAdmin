@@ -89,30 +89,6 @@ const deleteSelection = async () => {
     tableLoading.value = false;
 };
 
-const purify = (v) => {
-    let ret = {};
-    for (let i = 0; i < $.config.columns.length; i++) {
-        let col = $.config.columns[i];
-        switch (col.type) {
-            case Number: ret[col.value] = +v[col.value]; break;
-            case Boolean: ret[col.value] = v[col.value] == "true"; break;
-            default: ret[col.value] = v[col.value]; break;
-        }
-    }
-    return ret;
-}
-
-const exportAll = async () => {
-    try {
-        let raw = rawData.map(purify);
-        let fileName = `${$.config.className}_${util.timeString()}.csv`;
-        util.download(raw, fileName);
-        ElMessage.success("导出成功");
-    } catch (e) {
-        ElMessage.error("导出失败 " + e);
-    }
-};
-
 const fillForm = (data) => {
     for (let i = 0; i < $.config.columns.length; i++) {
         let col = $.config.columns[i];
@@ -124,10 +100,11 @@ const fillForm = (data) => {
 
 const submitForm = async () => {
     dialogLoading.value = true;
+    let df = util.purify(dialogForm, $.config.columns);
     if (dialogId.value) {
-        await lc.updateItem($.config.className, dialogId.value, purify(dialogForm));
+        await lc.updateItem($.config.className, dialogId.value, df);
     } else {
-        await lc.createItem($.config.className, purify(dialogForm));
+        await lc.createItem($.config.className, df);
     }
     dialogVisibility.value = false;
     dialogLoading.value = false;
@@ -182,7 +159,7 @@ onMounted(async () => {
             </el-popconfirm>
             <el-button plain @click="refresh" type="primary" :icon="Refresh">刷新</el-button>
             <el-button plain @click="create" type="primary" :icon="Plus">添加</el-button>
-            <el-button plain @click="exportAll" type="primary" :icon="Download">全部导出</el-button>
+            <el-button plain @click="$emit('down')" type="primary" :icon="Download">导出数据</el-button>
             <el-input class="search" @input="handleSearch" v-model="search" placeholder="搜索字段" align="right" clearable>
                 <template #append>
                     <el-select @change="handleSearch" v-model="searchField" placeholder="搜索区域" style="width: 110px">
