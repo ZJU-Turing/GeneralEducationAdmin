@@ -19,6 +19,11 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      VITE_APP_ID: ${{ secrets.APP_ID }}
+      VITE_APP_KEY: ${{ secrets.APP_KEY }}
+      VITE_SERVER_URL: ${{ secrets.SERVER_URL }}
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,7 +31,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: 'npm'
       - name: Install dependencies
         run: npm install
