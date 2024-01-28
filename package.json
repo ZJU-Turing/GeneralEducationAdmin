@@ -13,7 +13,7 @@
     },
     "dependencies": {
         "element-plus": "^2.5.3",
-        "leancloud-storage": "^4.15.2",
+        "leancloud-storage": "^2.5.4",
         "markdown-it": "^14.0.0",
         "papaparse": "^5.4.1",
         "vue": "^3.3.11",
