@@ -4,7 +4,7 @@ async function getAllData(type, limit = 1000) {
     let query = new AV.Query(type);
     query.limit(limit);
     let results = await query.find();
-    return results.map((c) => c.toFullJSON());
+    return results.map((c) => c.toJSON());
 }
 
 async function removeItem(type, id) {
@@ -30,7 +30,7 @@ async function searchData(type, key, value, limit = 1000) {
     query.equalTo(key, value);
     query.limit(limit);
     let results = await query.find();
-    return results.map((c) => c.toFullJSON());
+    return results.map((c) => c.toJSON());
 }
 
 function init() {
