@@ -1,0 +1,45 @@
+* {
+    -webkit-tap-highlight-color: transparent;
+    scrollbar-width: none;
+}
+
+*::selection {
+    background-color: rgba(187, 221, 251, 0.5);
+}
+
+html,
+body {
+    margin: 0;
+    background-color: #fff;
+}
+
+.el-cascader-menu:first-child {
+    min-width: 140px;
+}
+
+.el-cascader-menu:nth-child(2) {
+    min-width: 130px;
+}
+
+.el-cascader-menu:nth-child(3) {
+    min-width: 200px;
+}
+
+@media screen and (min-width: 768px) {
+    #app {
+        width: 800px;
+        margin: 0 auto;
+    }
+
+    .el-cascader-menu:first-child {
+        min-width: 180px;
+    }
+
+    .el-cascader-menu:nth-child(2) {
+        min-width: 180px;
+    }
+
+    .el-cascader-menu:nth-child(3) {
+        min-width: calc(100% - 180px * 2);
+    }
+}
