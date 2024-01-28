@@ -59,6 +59,7 @@ onMounted(async () => {
         let lv3 = courses.value[0].children[0].children[0].value;
         path.value = [lv1, lv2, lv3];
     }
+    await updateRemarks();
 });
 </script>
 
