@@ -39,20 +39,26 @@ const cced = (name) => {
     path.value[2] = name;
 };
 
-watch(path, async () => {
+const handlePathChange = async () => {
+    let ph = JSON.stringify(path.value);
+    localStorage.setItem("path", ph);
     if (path.value[2] == "create") {
         remarks.value = [];
     } else {
         await updateRemarks();
     }
-});
+};
 
 onMounted(async () => {
     await fetchCourses();
-    let lv1 = courses.value[0].value;
-    let lv2 = courses.value[0].children[0].value;
-    let lv3 = courses.value[0].children[0].children[0].value;
-    path.value = [lv1, lv2, lv3];
+    let localPath = localStorage.getItem("path");
+    if (localPath) path.value = JSON.parse(localPath);
+    else {
+        let lv1 = courses.value[0].value;
+        let lv2 = courses.value[0].children[0].value;
+        let lv3 = courses.value[0].children[0].children[0].value;
+        path.value = [lv1, lv2, lv3];
+    }
 });
 </script>
 
@@ -61,7 +67,7 @@ onMounted(async () => {
         <div class="title">通识课程评价系统</div>
         <div class="subtitle">浙江大学图灵班</div>
 
-        <el-cascader-panel class="panel" v-model="path" :options="courses" />
+        <el-cascader-panel class="panel" @change="handlePathChange" v-model="path" :options="courses" />
         <WriteComp class="write" v-if="path" @refresh="updateRemarks" @course-created="cced" :path="path" />
         <div v-loading="loading">
             <RemarkComp class="remark" v-for="r in remarks" :key="r.objectId" :data="r" />

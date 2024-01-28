@@ -1,25 +1,32 @@
 <script setup>
 import lc from "@/assets/js/leancloud";
 import { ElMessage } from "element-plus";
-import { computed, reactive, ref } from "vue";
+import { computed, onUpdated, reactive, ref, watch } from "vue";
 
 const $ = defineProps({ path: Array });
 const emit = defineEmits(["refresh", "courseCreated"]);
 
-const uploading = ref(false);
-const nowYear = new Date().getFullYear();
-const formRef = ref();
-const form = reactive({
+const emptyForm = {
     newc: "",
     type: [],
     score: undefined,
     grade: undefined,
     name: "",
     comment: "",
-});
+};
+
+const uploading = ref(false);
+const nowYear = new Date().getFullYear();
+const formRef = ref();
+const form = reactive(emptyForm);
 
 const course = computed(() => $.path[2]);
 const isCreate = computed(() => course.value == "create");
+
+watch(form, () => {
+    let fm = JSON.stringify(form);
+    localStorage.setItem("form", fm);
+}, { deep: true });
 
 const scoreValidator = (_, v, callback) => {
     if (!v) return callback();
@@ -89,11 +96,19 @@ const submit = async (fRef) => {
             emit("refresh");
 
             fRef.resetFields();
+            localStorage.removeItem("form");
         } catch (e) {
             ElMessage.error("提交失败 " + e);
         }
     });
 };
+
+onUpdated(() => {
+    let localForm = localStorage.getItem("form");
+    let lf = emptyForm;
+    if (localForm) lf = JSON.parse(localForm);
+    for (let k in lf) form[k] = lf[k];
+});
 </script>
 
 <template>
