@@ -1,6 +1,6 @@
 {
-    "name": "general-edu-collection",
-    "version": "0.0.0",
+    "name": "general-education-admin",
+    "version": "0.1.0",
     "private": true,
     "type": "module",
     "scripts": {
