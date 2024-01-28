@@ -58,7 +58,7 @@ onMounted(async () => {
 
 <template>
     <div class="main">
-        <div class="title">通识课程经验管理</div>
+        <div class="title">通识课程评价系统</div>
         <div class="subtitle">浙江大学图灵班</div>
 
         <el-cascader-panel class="panel" v-model="path" :options="courses" />

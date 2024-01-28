@@ -34,7 +34,7 @@ async function login() {
 
 <template>
     <div class="wrapper" v-if="!logined" v-loading.fullscreen.lock="loading">
-        <div class="title">通识课程经验管理</div>
+        <div class="title">通识课程评价系统</div>
         <div class="subtitle">浙江大学图灵班</div>
 
         <el-input v-model="password" @keyup.enter="login" placeholder="输入密码以访问后台" type="password" show-password>
