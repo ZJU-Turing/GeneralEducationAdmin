@@ -49,5 +49,6 @@ const activePanel = ref("remark");
     top: 1.5rem;
     width: calc(100vw - 2 * 1.7rem);
     height: calc(100vh - 2 * 1.5rem);
+    min-width: 900px;
 }
 </style>
