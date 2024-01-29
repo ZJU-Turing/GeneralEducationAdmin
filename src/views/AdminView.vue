@@ -48,7 +48,7 @@ const downloadCSV = async () => {
 </script>
 
 <template>
-    <LoginComp>
+    <LoginComp field="AdminPassword" placeholder="输入密码以访问后台" go-back>
         <el-tabs v-loading.fullscreen.lock="loading" v-model="activePanel" class="panel" type="border-card">
             <el-tab-pane label="评价" name="remark">
                 <TableComp @down="downloadCSV" :config="remarkConfig" :height="tbHeight" />

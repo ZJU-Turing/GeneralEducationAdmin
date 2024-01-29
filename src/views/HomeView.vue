@@ -64,20 +64,23 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="main">
-        <div class="title">通识课程评价系统</div>
-        <div class="subtitle">浙江大学图灵班</div>
-
-        <el-cascader-panel class="panel" @change="handlePathChange" v-model="path" :options="courses" />
-        <WriteComp class="write" v-if="path" @refresh="updateRemarks" @course-created="cced" :path="path" />
-        <div v-loading="loading">
-            <RemarkComp class="remark" v-for="r in remarks" :key="r.objectId" :data="r" />
+    <LoginComp field="UserPassword" placeholder="输入密码以登录">
+        <div class="main">
+            <div class="title">通识课程评价系统</div>
+            <div class="subtitle">浙江大学图灵班</div>
+    
+            <el-cascader-panel class="panel" @change="handlePathChange" v-model="path" :options="courses" />
+            <WriteComp class="write" v-if="path" @refresh="updateRemarks" @course-created="cced" :path="path" />
+            <div v-loading="loading">
+                <RemarkComp class="remark" v-for="r in remarks" :key="r.objectId" :data="r" />
+            </div>
+    
+            <div class="copyright">
+                Developed by <a href="https://xecades.xyz/">Xecades</a> &copy; {{ nowYear }} ·
+                <RouterLink to="/admin">Admin</RouterLink>
+            </div>
         </div>
-
-        <div class="copyright">Developed by <a href="https://xecades.xyz/">Xecades</a> &copy; {{ nowYear }} · <RouterLink
-                to="/admin">Admin</RouterLink>
-        </div>
-    </div>
+    </LoginComp>
 </template>
 
 <style scoped>

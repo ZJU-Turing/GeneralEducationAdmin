@@ -7,6 +7,14 @@ async function getAllData(type, limit = 1000) {
     return results.map((c) => c.toJSON());
 }
 
+async function checkExistence(type, key, value) {
+    let query = new AV.Query(type);
+    query.equalTo(key, value);
+    query.limit(1);
+    let results = await query.find();
+    return results.length > 0;
+}
+
 async function removeItem(type, id) {
     let item = AV.Object.createWithoutData(type, id);
     await item.destroy();
@@ -91,19 +99,13 @@ async function clearAllRemarks() {
     await AV.Object.destroyAll(results);
 }
 
-async function checkPasswd(passwd) {
-    let query = new AV.Query("Password");
-    query.equalTo("passwd", passwd);
-    let results = await query.find();
-    return results.length > 0;
-}
-
 const getAllCourses = () => getAllData("Course");
 const getAllRemarks = () => getAllData("Remark");
 const searchCourses = (key, value) => searchData("Course", key, value);
 const searchRemarks = (key, value) => searchData("Remark", key, value);
 const removeCourse = (id) => removeItem("Course", id);
 const removeRemark = (id) => removeItem("Remark", id);
+const checkPassword = (p, type) => checkExistence(type, "value", p);
 
 const lc = {
     AV,
@@ -120,11 +122,11 @@ const lc = {
     clearAllRemarks,
     getAllRemarks,
     searchRemarks,
-    checkPasswd,
     getAllData,
     removeItem,
     updateItem,
     createItem,
+    checkPassword,
 };
 
 export default lc;
