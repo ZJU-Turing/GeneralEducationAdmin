@@ -72,7 +72,7 @@ async function login() {
 }
 
 .wrapper {
-    margin-top: 50%;
+    margin-top: 50vh;
     padding: 0 1rem;
     transform: translateY(-50%);
 }
