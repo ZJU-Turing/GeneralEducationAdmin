@@ -30,3 +30,4 @@ coverage
 *.tsbuildinfo
 
 tools/output
+tools/data.csv

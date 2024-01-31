@@ -18,7 +18,6 @@ const loading = ref(false);
 
 onMounted(async () => {
     loading.value = true;
-    console.log($.field);
     let local = localStorage.getItem($.field);
     if (local && await lc.checkPassword(local, $.field))
         logined.value = true;

@@ -1,7 +1,8 @@
 <script setup>
-import lc from "@/assets/js/leancloud";
 import { ElMessage } from "element-plus";
 import { computed, onUpdated, reactive, ref, watch } from "vue";
+import lc from "@/assets/js/leancloud";
+import notify from "@/assets/js/notify";
 
 const $ = defineProps({ path: Array });
 const emit = defineEmits(["refresh", "courseCreated"]);
@@ -60,23 +61,27 @@ const rules = {
 };
 
 const uploadCourse = async () => {
-    await lc.createCourse({
+    const d = {
         name: form.newc,
         type: $.path[0],
         category: $.path[1],
         isArt: form.type.includes("美育认定"),
         isLabor: form.type.includes("劳育认定"),
-    });
+    };
+    await lc.createCourse(d);
+    await notify.createdCourse(d);
 };
 
 const uploadRemark = async () => {
-    await lc.createRemark({
+    const d = {
         score: +form.score,
         grade: +form.grade,
         name: form.name,
         comment: form.comment,
         course: isCreate.value ? form.newc : course.value,
-    });
+    };
+    await lc.createRemark(d);
+    await notify.createdRemark(d);
 };
 
 const submit = async (fRef) => {

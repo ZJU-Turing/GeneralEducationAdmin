@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
 import { ArrowLeft, Delete, Refresh, Download, Plus } from "@element-plus/icons-vue";
+import { ElMessage, ElNotification } from "element-plus";
 
 import lc from "@/assets/js/leancloud";
 import router from "@/router";
@@ -11,6 +12,7 @@ const $ = defineProps({ config: Object, height: String });
 const pageSizes = [20, 50, 100, 200];
 
 let rawData = [];
+let isSentEditWarning = false;
 
 const tableLoading = ref(false);
 const dialogLoading = ref(false);
@@ -27,6 +29,17 @@ const dialogVisibility = ref(false);
 
 const fetchData = async () => {
     rawData = (await lc.getAllData($.config.className)).reverse();
+};
+
+const sendEditWarning = () => {
+    if (isSentEditWarning) return;
+    isSentEditWarning = true;
+    ElNotification({
+        title: "Warning",
+        message: "数据更新成功，请务必上传或委托他人上传 data.csv 文件",
+        type: "warning",
+        duration: 0,
+    });
 };
 
 const syncData = () => {
@@ -87,6 +100,7 @@ const deleteSelection = async () => {
         ElMessage.error("删除失败 " + e);
     }
     tableLoading.value = false;
+    sendEditWarning();
 };
 
 const fillForm = (data) => {
@@ -100,13 +114,19 @@ const fillForm = (data) => {
 
 const submitForm = async () => {
     dialogLoading.value = true;
-    let df = util.purify(dialogForm, $.config.columns);
-    if (dialogId.value) {
-        await lc.updateItem($.config.className, dialogId.value, df);
-    } else {
-        await lc.createItem($.config.className, df);
+    try {
+        let df = util.purify(dialogForm, $.config.columns);
+    
+        if (dialogId.value) await lc.updateItem($.config.className, dialogId.value, df);
+        else await lc.createItem($.config.className, df);
+    
+        dialogVisibility.value = false;
+        sendEditWarning();
+        
+        ElMessage.success("更新成功");
+    } catch (e) {
+        ElMessage.error("更新失败 " + e);
     }
-    dialogVisibility.value = false;
     dialogLoading.value = false;
 
     tableLoading.value = true;
