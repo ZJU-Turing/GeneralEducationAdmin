@@ -45,7 +45,8 @@ function parseCourses(cs) {
     }
 
     let len = ret.length;
-    ret[len - 1].children.push(otherC);
+    if (!ret[len - 1].children.find((c) => c.value == "其他课程"))
+        ret[len - 1].children.push(otherC);
     return ret;
 }
 
