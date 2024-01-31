@@ -9,7 +9,7 @@
         "preview": "vite preview",
         "csv2json": "node ./tools/csv2json.js",
         "fetchc": "node ./tools/fetchCourses.js",
-        "uploadl": "node --env-file=.env.local ./tools/uploadLocal.js"
+        "dangerouslyUploadLocal": "node --env-file=.env.local ./tools/uploadLocal.js"
     },
     "dependencies": {
         "element-plus": "^2.5.3",

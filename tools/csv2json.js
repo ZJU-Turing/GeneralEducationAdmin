@@ -32,7 +32,7 @@ function addRemark(rec) {
         name: rec["姓名"],
         course: rec["课程名称"],
         comment: rec["评价"],
-        score: parseInt(rec["评分"]),
+        score: parseFloat(rec["评分"]),
         grade: parseInt(rec["年级"]),
     });
 }
