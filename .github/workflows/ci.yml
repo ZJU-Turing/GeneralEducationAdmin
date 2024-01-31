@@ -23,6 +23,7 @@ jobs:
       VITE_APP_ID: ${{ secrets.APP_ID }}
       VITE_APP_KEY: ${{ secrets.APP_KEY }}
       VITE_SERVER_URL: ${{ secrets.SERVER_URL }}
+      VITE_NOTIFY_URL: ${{ secrets.NOTIFY_URL }}
 
     runs-on: ubuntu-latest
     steps:
