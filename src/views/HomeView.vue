@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref } from "vue";
 
 import lc from "@/assets/js/leancloud";
 import util from "@/assets/js/util";
@@ -49,10 +49,23 @@ const handlePathChange = async () => {
     }
 };
 
+const findReview = async (hash) => {
+    if (!hash) return false;
+    const r = (await lc.searchRemarks("objectId", hash))[0];
+    if (!r) return false;
+    const c = (await lc.searchCourses("name", r.course))[0];
+    return [c.type, c.category, c.name];
+};
+
 onMounted(async () => {
     await fetchCourses();
+
+    let hash = location.hash.substring(1);
+    let hashPath = await findReview(hash);
     let localPath = localStorage.getItem("path");
-    if (localPath) path.value = JSON.parse(localPath);
+
+    if (hashPath) path.value = hashPath;
+    else if (localPath) path.value = JSON.parse(localPath);
     else {
         let lv1 = courses.value[0].value;
         let lv2 = courses.value[0].children[0].value;
@@ -60,6 +73,11 @@ onMounted(async () => {
         path.value = [lv1, lv2, lv3];
     }
     await updateRemarks();
+
+    if (hashPath) {
+        let el = document.getElementById(hash);
+        el.scrollIntoView({ behavior: "smooth" });
+    }
 });
 </script>
 
@@ -68,13 +86,13 @@ onMounted(async () => {
         <div class="main">
             <div class="title">通识课程评价系统</div>
             <div class="subtitle">浙江大学图灵班</div>
-    
+
             <el-cascader-panel class="panel" @change="handlePathChange" v-model="path" :options="courses" />
             <WriteComp class="write" v-if="path" @refresh="updateRemarks" @course-created="cced" :path="path" />
             <div v-loading="loading">
                 <RemarkComp class="remark" v-for="r in remarks" :key="r.objectId" :data="r" />
             </div>
-    
+
             <div class="copyright">
                 Developed by <a href="https://xecades.xyz/">Xecades</a> &copy; {{ nowYear }} ·
                 <RouterLink to="/admin">Admin</RouterLink>

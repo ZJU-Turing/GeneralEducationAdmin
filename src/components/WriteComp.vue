@@ -80,7 +80,8 @@ const uploadRemark = async () => {
         comment: form.comment,
         course: isCreate.value ? form.newc : course.value,
     };
-    await lc.createRemark(d);
+    let ret = await lc.createRemark(d);
+    d.objectId = ret.id;
     await notify.createdRemark(d);
 };
 

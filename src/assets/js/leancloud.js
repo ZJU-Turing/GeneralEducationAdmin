@@ -64,7 +64,7 @@ function createCourseRaw(data) {
 
 async function createCourse(data) {
     let course = createCourseRaw(data);
-    await course.save();
+    return await course.save();
 }
 
 async function clearAllCourses() {
@@ -88,7 +88,7 @@ function createRemarkRaw(data) {
 
 async function createRemark(data) {
     let remark = createRemarkRaw(data);
-    await remark.save();
+    return await remark.save();
 }
 
 async function clearAllRemarks() {

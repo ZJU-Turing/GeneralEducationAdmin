@@ -9,16 +9,21 @@ const md = markdownit({
 
 const parsed = ref("");
 
+const setHash = () => {
+    location.hash = `#${$.data.objectId}`;
+};
+
 onMounted(() => {
     parsed.value = md.render($.data.comment);
 });
 </script>
 
 <template>
-    <el-card shadow="hover">
+    <el-card shadow="hover" :id="data.objectId">
         <template #header>
             <el-text size="large" type="info" class="info">
-                <el-text size="large" type="primary">{{ data.score }} 分</el-text>
+                <el-text size="large" type="primary" style="cursor: pointer;" @click="setHash">{{ data.score }}
+                    分</el-text>
                 · {{ data.name || "匿名" }} · {{ data.grade }} · {{ data.course }}
             </el-text>
         </template>
