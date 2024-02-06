@@ -3,13 +3,12 @@ import markdownit from "markdown-it";
 import { onMounted, ref } from "vue";
 
 const $ = defineProps({ data: Object });
-const md = markdownit({
-    html: true,
-});
+const md = markdownit({ html: true });
 
 const parsed = ref("");
 
-const setHash = () => {
+const copyRef = () => {
+    navigator.clipboard.writeText(`https://tsk.xecades.xyz/#${$.data.objectId}`);
     location.hash = `#${$.data.objectId}`;
 };
 
@@ -22,8 +21,9 @@ onMounted(() => {
     <el-card shadow="hover" :id="data.objectId">
         <template #header>
             <el-text size="large" type="info" class="info">
-                <el-text size="large" type="primary" style="cursor: pointer;" @click="setHash">{{ data.score }}
-                    分</el-text>
+                <el-text size="large" type="primary" style="cursor: pointer;" @click="copyRef">
+                    {{ data.score }} 分
+                </el-text>
                 · {{ data.name || "匿名" }} · {{ data.grade }} · {{ data.course }}
             </el-text>
         </template>

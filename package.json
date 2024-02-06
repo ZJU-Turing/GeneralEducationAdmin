@@ -12,6 +12,7 @@
         "dangerouslyUploadLocal": "node --env-file=.env.local ./tools/uploadLocal.js"
     },
     "dependencies": {
+        "clipboard": "^2.0.11",
         "element-plus": "^2.5.3",
         "leancloud-storage": "^2.5.4",
         "markdown-it": "^14.0.0",
