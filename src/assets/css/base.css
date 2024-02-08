@@ -25,6 +25,15 @@ body {
     min-width: 200px;
 }
 
+.md a {
+    color: #2892ff;
+    text-decoration: none;
+}
+
+.md a:hover {
+    color: #79bcff;
+}
+
 @media screen and (min-width: 768px) {
     #app {
         width: 800px;

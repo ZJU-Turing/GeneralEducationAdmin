@@ -27,7 +27,7 @@ onMounted(() => {
                 · {{ data.name || "匿名" }} · {{ data.grade }} · {{ data.course }}
             </el-text>
         </template>
-        <div v-html="parsed" class="content"></div>
+        <div v-html="parsed" class="content md"></div>
     </el-card>
 </template>
 
