@@ -55,5 +55,3 @@ async function uploadCourses(cs) {
 
     console.info("Done.");
 })();
-
-// TODO: upload local
