@@ -151,7 +151,7 @@ onUpdated(() => {
             </el-form-item>
 
             <el-form-item label="课程评价" prop="comment">
-                <el-input type="textarea" v-model="form.comment" placeholder="支持基础 Markdown 语法" auto-complete="off"
+                <el-input type="textarea" v-model="form.comment" placeholder="采用 Markdown 语法，不支持标题、图片" auto-complete="off"
                     :autosize="{ minRows: 5 }" />
             </el-form-item>
 
