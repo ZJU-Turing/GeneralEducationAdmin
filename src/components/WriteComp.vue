@@ -1,6 +1,7 @@
 <script setup>
 import { ElMessage } from "element-plus";
 import { computed, onUpdated, reactive, ref, watch } from "vue";
+import markdownit from "markdown-it";
 import lc from "@/assets/js/leancloud";
 import notify from "@/assets/js/notify";
 
@@ -24,10 +25,21 @@ const form = reactive(emptyForm);
 const course = computed(() => $.path[2]);
 const isCreate = computed(() => course.value == "create");
 
-watch(form, () => {
-    let fm = JSON.stringify(form);
-    localStorage.setItem("form", fm);
-}, { deep: true });
+const md = markdownit({ html: true });
+const previewHtml = computed(() => {
+    if (!form.comment)
+        return "<p style='color: #c0c4cc; font-size: 0.85rem;'>Markdown 预览</p>";
+    return md.render(form.comment);
+});
+
+watch(
+    form,
+    () => {
+        let fm = JSON.stringify(form);
+        localStorage.setItem("form", fm);
+    },
+    { deep: true },
+);
 
 const scoreValidator = (_, v, callback) => {
     if (!v) return callback();
@@ -40,7 +52,8 @@ const scoreValidator = (_, v, callback) => {
 const gradeValidator = (_, v, callback) => {
     if (!v) return callback();
     if (!/^\d+$/.test(v)) return callback("年级必须为正整数");
-    if (v < 2019 || v > nowYear) return callback(`年级必须在 2019 到 ${nowYear} 之间`);
+    if (v < 2019 || v > nowYear)
+        return callback(`年级必须在 2019 到 ${nowYear} 之间`);
     return callback();
 };
 
@@ -52,12 +65,10 @@ const rules = {
     ],
     grade: [
         { required: true, message: "请输入年级" },
-        { validator: gradeValidator, trigger: "change" }
+        { validator: gradeValidator, trigger: "change" },
     ],
     name: [],
-    comment: [
-        { required: true, message: "请输入评价" }
-    ],
+    comment: [{ required: true, message: "请输入评价" }],
 };
 
 const uploadCourse = async () => {
@@ -97,8 +108,7 @@ const submit = async (fRef) => {
             ElMessage.success("提交成功");
             uploading.value = false;
 
-            if (isCreate.value)
-                emit("courseCreated", form.newc);
+            if (isCreate.value) emit("courseCreated", form.newc);
             emit("refresh");
 
             fRef.resetFields();
@@ -120,13 +130,30 @@ onUpdated(() => {
 <template>
     <el-card shadow="hover">
         <template #header>
-            <el-text v-if="!isCreate" size="large">为 <b>{{ course }}</b> 撰写评价</el-text>
-            <el-text v-else size="large">为 <b>{{ path[0] }} > {{ path[1] }}</b> 添加新课程并撰写评价</el-text>
+            <el-text v-if="!isCreate" size="large"
+                >为 <b>{{ course }}</b> 撰写评价</el-text
+            >
+            <el-text v-else size="large"
+                >为
+                <b>{{ path[0] }} > {{ path[1] }}</b>
+                添加新课程并撰写评价</el-text
+            >
         </template>
-        <el-form :disabled="uploading" :model="form" :rules="rules" ref="formRef" status-icon label-position="right"
-            label-width="90px">
+        <el-form
+            :disabled="uploading"
+            :model="form"
+            :rules="rules"
+            ref="formRef"
+            status-icon
+            label-position="right"
+            label-width="90px"
+        >
             <el-form-item label="课程名称" prop="newc" v-if="isCreate">
-                <el-input v-model="form.newc" placeholder="课程名" type="text" />
+                <el-input
+                    v-model="form.newc"
+                    placeholder="课程名"
+                    type="text"
+                />
             </el-form-item>
 
             <el-form-item label="认定类别" prop="type" v-if="isCreate">
@@ -139,7 +166,11 @@ onUpdated(() => {
             <el-divider v-if="isCreate" border-style="dashed" />
 
             <el-form-item label="课程评分" prop="score">
-                <el-input v-model="form.score" placeholder="0 ~ 10" type="text" />
+                <el-input
+                    v-model="form.score"
+                    placeholder="0 ~ 10"
+                    type="text"
+                />
             </el-form-item>
 
             <el-form-item label="年级" prop="grade">
@@ -147,17 +178,73 @@ onUpdated(() => {
             </el-form-item>
 
             <el-form-item label="你的昵称" prop="name">
-                <el-input v-model="form.name" placeholder="留空以匿名" type="text" />
+                <el-input
+                    v-model="form.name"
+                    placeholder="留空以匿名"
+                    type="text"
+                />
             </el-form-item>
 
             <el-form-item label="课程评价" prop="comment">
-                <el-input type="textarea" v-model="form.comment" placeholder="采用 Markdown 语法，不支持标题、图片" auto-complete="off"
-                    :autosize="{ minRows: 5 }" />
+                <div class="comment-preview-wrapper">
+                    <el-input
+                        type="textarea"
+                        v-model="form.comment"
+                        placeholder="采用 Markdown 语法，不支持标题、图片"
+                        auto-complete="off"
+                        :autosize="{ minRows: 5 }"
+                        class="comment-input"
+                    />
+                    <div class="preview-section">
+                        <div
+                            v-html="previewHtml"
+                            class="preview-content md"
+                        ></div>
+                    </div>
+                </div>
             </el-form-item>
 
             <el-form-item>
-                <el-button type="primary" @click="submit(formRef)">{{ uploading ? "上传中" : "提交" }}</el-button>
+                <el-button type="primary" @click="submit(formRef)">{{
+                    uploading ? "上传中" : "提交"
+                }}</el-button>
             </el-form-item>
         </el-form>
     </el-card>
 </template>
+
+<style scoped>
+.comment-preview-wrapper {
+    width: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+.comment-preview-wrapper :deep(.el-textarea__inner) {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.preview-section {
+    background-color: #fafbfc;
+    border: 1px solid #dcdfe6;
+    border-top: none;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.preview-content {
+    color: #6f7175;
+    font-size: 0.85rem;
+    line-height: 1.5rem;
+    min-height: 2.5rem;
+    padding: 6px 12px;
+}
+
+@media screen and (min-width: 768px) {
+    .preview-content {
+        padding: 6px 16px;
+    }
+}
+</style>

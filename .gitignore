@@ -31,3 +31,4 @@ coverage
 
 tools/output
 tools/data.csv
+.env
